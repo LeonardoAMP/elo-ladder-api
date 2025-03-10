@@ -3,9 +3,12 @@ import { json } from 'body-parser';
 import connectToDatabase from './config/database';
 import routes from './routes/index';
 import errorMiddleware from './middleware/error.middleware';
+import cors from 'cors';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+app.use(cors({ origin: process.env.FRONTEND_URL }));
 
 // Middleware
 app.use(json());
