@@ -1,5 +1,5 @@
-import { Player } from '../models/Player';
-import { Match } from '../models/Match';
+import Player from '../models/Player';
+import Match from '../models/Match';
 import { calculateElo } from '../utils/eloCalculator';
 
 export const updateEloAfterMatch = async (winnerId: number, loserId: number) => {
