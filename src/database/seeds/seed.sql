@@ -24,18 +24,19 @@ CREATE TABLE players (
     "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create matches table (matching Match model)
+-- Create matches table (matching updated Match model)
 CREATE TABLE matches (
     id SERIAL PRIMARY KEY,
-    "playerAId" INTEGER NOT NULL,
-    "playerBId" INTEGER NOT NULL,
+    "winnerId" INTEGER NOT NULL,
+    "loserId" INTEGER NOT NULL,
     timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "eloGain" INTEGER NOT NULL,
-    "eloLoss" INTEGER NOT NULL,
+    "eloChange" INTEGER NOT NULL,
+    "winnerCurrentElo" INTEGER NOT NULL,
+    "loserCurrentElo" INTEGER NOT NULL,
     "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY ("playerAId") REFERENCES players(id) ON DELETE CASCADE,
-    FOREIGN KEY ("playerBId") REFERENCES players(id) ON DELETE CASCADE
+    FOREIGN KEY ("winnerId") REFERENCES players(id) ON DELETE CASCADE,
+    FOREIGN KEY ("loserId") REFERENCES players(id) ON DELETE CASCADE
 );
 
 -- Seed users
@@ -47,19 +48,21 @@ INSERT INTO users (username, password, "createdAt", "updatedAt") VALUES
 
 -- Seed players
 INSERT INTO players (name, elo, "matchesPlayed", wins, losses, "createdAt", "updatedAt") VALUES
-('Mario Player', 1625, 5, 4, 1, NOW(), NOW()),
-('Link Master', 1450, 4, 1, 3, NOW(), NOW()),
-('Kirby King', 1580, 3, 2, 1, NOW(), NOW()),
-('Fox Fighter', 1490, 3, 1, 2, NOW(), NOW()),
-('Pikachu Pro', 1520, 5, 3, 2, NOW(), NOW());
+('Blazer', 800, 0, 0, 0, NOW(), NOW()),
+('Jak', 800, 0, 0, 0, NOW(), NOW()),
+('DarkR', 800, 0, 0, 0, NOW(), NOW()),
+('Fred', 800, 0, 0, 0, NOW(), NOW()),
+('Jr', 800, 0, 0, 0, NOW(), NOW()),
+('Leoo', 800, 0, 0, 0, NOW(), NOW()),
+('Jul', 800, 0, 0, 0, NOW(), NOW());
 
--- Seed matches - eloGain and eloLoss are the ELO points that were gained/lost in each match
-INSERT INTO matches ("playerAId", "playerBId", timestamp, "eloGain", "eloLoss", "createdAt", "updatedAt") VALUES
-(1, 2, NOW() - INTERVAL '5 days', 15, 15, NOW(), NOW()), -- Mario vs Link (Mario won)
-(3, 4, NOW() - INTERVAL '4 days', 12, 12, NOW(), NOW()), -- Kirby vs Fox (Kirby won) 
-(2, 5, NOW() - INTERVAL '3 days', 18, 18, NOW(), NOW()), -- Link vs Pikachu (Pikachu won)
-(1, 3, NOW() - INTERVAL '2 days', 10, 10, NOW(), NOW()), -- Mario vs Kirby (Mario won)
-(4, 5, NOW() - INTERVAL '1 day', 20, 20, NOW(), NOW()),  -- Fox vs Pikachu (Pikachu won)
-(1, 5, NOW() - INTERVAL '10 hours', 15, 15, NOW(), NOW()), -- Mario vs Pikachu (Mario won)
-(2, 4, NOW() - INTERVAL '5 hours', 8, 8, NOW(), NOW()),  -- Link vs Fox (Fox won)
-(1, 4, NOW() - INTERVAL '2 hours', 10, 10, NOW(), NOW()); -- Mario vs Fox (Mario won)
+-- Seed matches - updated to use the new schema
+INSERT INTO matches ("winnerId", "loserId", timestamp, "eloChange", "winnerCurrentElo", "loserCurrentElo", "createdAt", "updatedAt") VALUES
+(1, 2, NOW() - INTERVAL '5 days', 15, 815, 785, NOW(), NOW()), -- Blazer vs Jak (Blazer won)
+(3, 4, NOW() - INTERVAL '4 days', 12, 812, 788, NOW(), NOW()), -- DarkR vs Fred (DarkR won) 
+(5, 2, NOW() - INTERVAL '3 days', 18, 818, 767, NOW(), NOW()), -- Jr vs Jak (Jr won)
+(1, 3, NOW() - INTERVAL '2 days', 10, 825, 802, NOW(), NOW()), -- Blazer vs DarkR (Blazer won)
+(5, 4, NOW() - INTERVAL '1 day', 20, 838, 768, NOW(), NOW()),  -- Jr vs Fred (Jr won)
+(1, 5, NOW() - INTERVAL '10 hours', 15, 840, 823, NOW(), NOW()), -- Blazer vs Jr (Blazer won)
+(4, 2, NOW() - INTERVAL '5 hours', 8, 776, 759, NOW(), NOW()),  -- Fred vs Jak (Fred won)
+(1, 4, NOW() - INTERVAL '2 hours', 10, 850, 766, NOW(), NOW()); -- Blazer vs Fred (Blazer won)

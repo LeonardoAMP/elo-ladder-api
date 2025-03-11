@@ -6,8 +6,7 @@ import { calculateElo } from '../utils/eloCalculator';
 // Create a new match
 export const createMatch = async (req: Request, res: Response) => {
     const { playerAId, playerBId, winnerId } = req.body;
-    console.log(playerAId, playerBId, winnerId);
-    console.log('I AM HERE');
+
     try {
         const playerA = await Player.findByPk(playerAId);
         const playerB = await Player.findByPk(playerBId);
@@ -16,19 +15,34 @@ export const createMatch = async (req: Request, res: Response) => {
             return res.status(404).json({ message: 'Player not found' });
         }
 
-        const eloChange = calculateElo(playerA.elo, playerB.elo);
+        // Determine winner and loser
+        const winner = winnerId === playerAId ? playerA : playerB;
+        const loser = winnerId === playerAId ? playerB : playerA;
+        
+        // Calculate ELO change
+        const eloChange = calculateElo(winner.elo, loser.elo);
 
         const match = await Match.create({
-            playerAId,
-            playerBId,
+            winnerId,
+            loserId: loser.id,
             timestamp: new Date(),
-            eloGain: eloChange,
-            eloLoss: -eloChange,
+            eloChange,
+            winnerCurrentElo: winner.elo,
+            loserCurrentElo: loser.elo,
         });
 
-        // Update player ELOs
-        await playerA.update({ elo: playerA.elo + (winnerId === playerAId ? eloChange : -eloChange) });
-        await playerB.update({ elo: playerB.elo + (winnerId === playerBId ? eloChange : -eloChange) });
+        // Update player ELOs and statistics
+        await winner.update({ 
+            elo: winner.elo + eloChange,
+            matchesPlayed: winner.matchesPlayed + 1,
+            wins: winner.wins + 1
+        });
+        
+        await loser.update({ 
+            elo: loser.elo - eloChange,
+            matchesPlayed: loser.matchesPlayed + 1,
+            losses: loser.losses + 1
+        });
 
         return res.status(201).json(match);
     } catch (error) {
@@ -49,7 +63,7 @@ export const getMatches = async (req: Request, res: Response) => {
 // Update a match
 export const updateMatch = async (req: Request, res: Response) => {
     const { id } = req.params;
-    const { playerAId, playerBId, winnerId } = req.body;
+    const { winnerId, loserId } = req.body;
 
     try {
         const match = await Match.findByPk(id);
@@ -57,7 +71,7 @@ export const updateMatch = async (req: Request, res: Response) => {
             return res.status(404).json({ message: 'Match not found' });
         }
 
-        await match.update({ playerAId, playerBId, winnerId });
+        await match.update({ winnerId, loserId });
         return res.status(200).json(match);
     } catch (error) {
         return res.status(500).json({ message: 'Error updating match', error });

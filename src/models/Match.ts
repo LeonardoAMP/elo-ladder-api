@@ -3,11 +3,12 @@ import { sequelize } from '../config/database';
 
 class Match extends Model {
   public id!: number;
-  public playerAId!: number;
-  public playerBId!: number;
+  public winnerId!: number;
+  public loserId!: number;
   public timestamp!: Date;
-  public eloGain!: number;
-  public eloLoss!: number;
+  public eloChange!: number;
+  public winnerCurrentElo!: number;
+  public loserCurrentElo!: number;
 }
 
 Match.init(
@@ -17,11 +18,11 @@ Match.init(
       autoIncrement: true,
       primaryKey: true,
     },
-    playerAId: {
+    winnerId: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    playerBId: {
+    loserId: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
@@ -30,11 +31,15 @@ Match.init(
       allowNull: false,
       defaultValue: DataTypes.NOW,
     },
-    eloGain: {
+    eloChange: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    eloLoss: {
+    winnerCurrentElo: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    loserCurrentElo: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
