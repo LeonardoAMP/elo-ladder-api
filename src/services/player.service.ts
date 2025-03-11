@@ -6,7 +6,7 @@ import { Op } from 'sequelize';
 const createPlayer = async (name: string) => {
   const newPlayer = await Player.create({
     name,
-    elo: 1500,
+    elo: 800,
     matchesPlayed: 0,
     wins: 0,
     losses: 0,

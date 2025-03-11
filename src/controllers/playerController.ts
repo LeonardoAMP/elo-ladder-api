@@ -1,14 +1,14 @@
 import { Request, Response } from 'express';
-import Player from '../models/Player';
 import playerService from '../services/player.service';
 
 // Create a new player
 export const createPlayer = async (req: Request, res: Response) => {
   try {
     const playerData = req.body;
-    const newPlayer = await playerService.createPlayer(playerData);
+    const newPlayer = await playerService.createPlayer(playerData.name);
     res.status(201).json(newPlayer);
   } catch (error) {
+    console.error('Error creating player:', error);
     res.status(500).json({ message: 'Error creating player', error });
   }
 };
@@ -19,6 +19,7 @@ export const getPlayers = async (req: Request, res: Response) => {
     const players = await playerService.getPlayers();
     res.status(200).json(players);
   } catch (error) {
+    console.error('Error fetching players:', error);
     res.status(500).json({ message: 'Error fetching players', error });
   }
 };

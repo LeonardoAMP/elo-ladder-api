@@ -6,11 +6,10 @@ import { validateMatch } from '../middleware/validation.middleware';
 const router = Router();
 
 // Route to create a new match
-//router.post('/', authMiddleware, validateMatch, createMatch);
-router.post('/', createMatch);
+router.post('/', authMiddleware, validateMatch,createMatch);
 
 // Route to get all matches
-router.get('/', authMiddleware, getMatches);
+router.get('/', getMatches);
 
 // Route to get recent matches
 //router.get('/recent', authMiddleware, getRecentMatches);

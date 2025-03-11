@@ -7,8 +7,7 @@ import { getRepository } from 'typeorm';
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret'; // Replace with your secret
 
 const login = async (username: string, password: string): Promise<string> => {
-    const userRepository = getRepository(User);
-    const user = await userRepository.findOne({ where: { username } });
+    const user = await User.findOne({ where: { username } });
 
     if (!user) {
         throw new Error('User not found');
@@ -25,15 +24,13 @@ const login = async (username: string, password: string): Promise<string> => {
 };
 
 const register = async (username: string, password: string): Promise<User> => {
-    const userRepository = getRepository(User);
     const hashedPassword = await hash(password, 10); // Fixed bcrypt.hash to hash
 
-    const newUser = userRepository.create({
+    const newUser = await User.create({
         username,
         password: hashedPassword,
     });
 
-    await userRepository.save(newUser);
     return newUser;
 };
 
