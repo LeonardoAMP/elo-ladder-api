@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createMatch, getMatches, updateMatch, deleteMatch, getRecentMatches } from '../controllers/matchController';
+import { createMatch, getMatches, updateMatch, deleteMatch, getRecentMatches, filterMatches } from '../controllers/matchController';
 import authMiddleware from '../middleware/auth.middleware';
 import { validateMatch } from '../middleware/validation.middleware';
 
@@ -14,6 +14,9 @@ router.get('/', getMatches);
 // Route to get recent matches
 //router.get('/recent', authMiddleware, getRecentMatches);
 router.get('/recent', getRecentMatches);
+
+// Route to filter matches
+router.get('/filter', filterMatches);
 
 // Route to update a match by ID
 router.put('/:id', authMiddleware, validateMatch, updateMatch);

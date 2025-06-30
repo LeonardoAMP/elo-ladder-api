@@ -9,6 +9,7 @@ class Match extends Model {
   public eloChange!: number;
   public winnerCurrentElo!: number;
   public loserCurrentElo!: number;
+  public isActive!: boolean;
 }
 
 Match.init(
@@ -42,6 +43,11 @@ Match.init(
     loserCurrentElo: {
       type: DataTypes.INTEGER,
       allowNull: false,
+    },
+    isActive: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true,
     },
   },
   {
