@@ -2,6 +2,48 @@ import { Request, Response } from 'express';
 import playerService from '../services/player.service';
 import { CreatePlayerData, UpdatePlayerData } from '../types/player.types';
 
+/**
+ * @swagger
+ * tags:
+ *   name: Players
+ *   description: Player management endpoints
+ */
+
+/**
+ * @swagger
+ * /players:
+ *   post:
+ *     summary: Create a new player
+ *     tags: [Players]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: The player's name
+ *                 example: John Doe
+ *     responses:
+ *       201:
+ *         description: Player created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Player'
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 // Create a new player
 export const createPlayer = async (req: Request, res: Response) => {
   try {
@@ -14,6 +56,28 @@ export const createPlayer = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * @swagger
+ * /players:
+ *   get:
+ *     summary: Get all players
+ *     tags: [Players]
+ *     responses:
+ *       200:
+ *         description: List of all players
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Player'
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 // Get all players
 export const getPlayers = async (req: Request, res: Response) => {
   try {
@@ -25,6 +89,39 @@ export const getPlayers = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * @swagger
+ * /players/{id}:
+ *   get:
+ *     summary: Get a player by ID
+ *     tags: [Players]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: Player ID
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Player found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Player'
+ *       404:
+ *         description: Player not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 // Get a player by ID
 export const getPlayerById = async (req: Request, res: Response) => {
   try {

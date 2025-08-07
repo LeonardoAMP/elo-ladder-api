@@ -4,6 +4,65 @@ import Match from '../models/Match';
 import Player from '../models/Player';
 import { calculateElo } from '../utils/eloCalculator';
 
+/**
+ * @swagger
+ * tags:
+ *   name: Matches
+ *   description: Match management endpoints
+ */
+
+/**
+ * @swagger
+ * /matches:
+ *   post:
+ *     summary: Create a new match
+ *     tags: [Matches]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - playerAId
+ *               - playerBId
+ *               - winnerId
+ *             properties:
+ *               playerAId:
+ *                 type: integer
+ *                 description: ID of player A
+ *                 example: 1
+ *               playerBId:
+ *                 type: integer
+ *                 description: ID of player B
+ *                 example: 2
+ *               winnerId:
+ *                 type: integer
+ *                 description: ID of the winning player (must be either playerAId or playerBId)
+ *                 example: 1
+ *     responses:
+ *       201:
+ *         description: Match created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Match'
+ *       404:
+ *         description: Player not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+
 // Create a new match
 export const createMatch = async (req: Request, res: Response) => {
     const { playerAId, playerBId, winnerId } = req.body;
@@ -51,6 +110,28 @@ export const createMatch = async (req: Request, res: Response) => {
     }
 };
 
+/**
+ * @swagger
+ * /matches:
+ *   get:
+ *     summary: Get all active matches
+ *     tags: [Matches]
+ *     responses:
+ *       200:
+ *         description: List of all active matches
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Match'
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 // Get all matches
 export const getMatches = async (req: Request, res: Response) => {
     try {
@@ -63,6 +144,59 @@ export const getMatches = async (req: Request, res: Response) => {
     }
 };
 
+/**
+ * @swagger
+ * /matches/{id}:
+ *   put:
+ *     summary: Update a match
+ *     tags: [Matches]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: Match ID
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - winnerId
+ *               - loserId
+ *             properties:
+ *               winnerId:
+ *                 type: integer
+ *                 description: ID of the winning player
+ *                 example: 1
+ *               loserId:
+ *                 type: integer
+ *                 description: ID of the losing player
+ *                 example: 2
+ *     responses:
+ *       200:
+ *         description: Match updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Match'
+ *       404:
+ *         description: Match or player not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 // Update a match
 export const updateMatch = async (req: Request, res: Response) => {
     const { id } = req.params;
@@ -140,6 +274,37 @@ export const updateMatch = async (req: Request, res: Response) => {
     }
 };
 
+/**
+ * @swagger
+ * /matches/{id}:
+ *   delete:
+ *     summary: Delete a match (soft delete)
+ *     tags: [Matches]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: Match ID
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       204:
+ *         description: Match deleted successfully
+ *       404:
+ *         description: Match or player not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 // Delete a match
 export const deleteMatch = async (req: Request, res: Response) => {
     const { id } = req.params;
@@ -183,6 +348,28 @@ export const deleteMatch = async (req: Request, res: Response) => {
     }
 };
 
+/**
+ * @swagger
+ * /matches/recent:
+ *   get:
+ *     summary: Get recent matches
+ *     tags: [Matches]
+ *     responses:
+ *       200:
+ *         description: List of recent active matches (last 10)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Match'
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 // Get recent matches
 export const getRecentMatches = async (req: Request, res: Response) => {
     try {
@@ -197,6 +384,96 @@ export const getRecentMatches = async (req: Request, res: Response) => {
     }
 };
 
+/**
+ * @swagger
+ * /matches/filter:
+ *   get:
+ *     summary: Filter matches with various criteria
+ *     tags: [Matches]
+ *     parameters:
+ *       - in: query
+ *         name: playerId
+ *         description: Filter matches where the player was either winner or loser
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: winnerId
+ *         description: Filter matches by specific winner
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: loserId
+ *         description: Filter matches by specific loser
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: startDate
+ *         description: Filter matches from this date onwards (ISO format)
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *       - in: query
+ *         name: endDate
+ *         description: Filter matches up to this date (ISO format)
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *       - in: query
+ *         name: minEloChange
+ *         description: Filter matches with ELO change >= this value
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: maxEloChange
+ *         description: Filter matches with ELO change <= this value
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: limit
+ *         description: Number of results to return
+ *         schema:
+ *           type: integer
+ *           default: 50
+ *       - in: query
+ *         name: offset
+ *         description: Number of results to skip for pagination
+ *         schema:
+ *           type: integer
+ *           default: 0
+ *     responses:
+ *       200:
+ *         description: Filtered matches with pagination info
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 matches:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Match'
+ *                 pagination:
+ *                   type: object
+ *                   properties:
+ *                     total:
+ *                       type: integer
+ *                       description: Total number of matches matching the filter
+ *                     limit:
+ *                       type: integer
+ *                       description: Number of results returned
+ *                     offset:
+ *                       type: integer
+ *                       description: Number of results skipped
+ *                     hasMore:
+ *                       type: boolean
+ *                       description: Whether there are more results available
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 // Filter matches
 export const filterMatches = async (req: Request, res: Response) => {
     const { 
