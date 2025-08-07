@@ -5,12 +5,13 @@
   "main": "src/server.ts",
   "scripts": {
     "start": "ts-node src/server.ts",
-    "dev": "ts-node-dev src/server.ts",
+    "dev": "nodemon",
     "prebuild": "npm install",
     "build": "tsc",
     "test": "jest"
   },
   "dependencies": {
+    "@types/express-validator": "^2.20.33",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
@@ -34,9 +35,10 @@
     "@types/node": "^16.11.7",
     "@types/pg": "^8.11.11",
     "jest": "^27.0.6",
+    "nodemon": "^3.1.10",
     "ts-jest": "^27.0.3",
-    "ts-node": "^10.4.0",
-    "ts-node-dev": "^1.1.8",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
     "typescript": "^4.9.5"
   },
   "keywords": [

@@ -1,31 +1,46 @@
-import Player from '../models/Player';
+import { Player, Character } from '../models';
 import Match from '../models/Match';
 import { Op } from 'sequelize';
+import { CreatePlayerData, UpdatePlayerData } from '../types/player.types';
 
 // Create a new player
-const createPlayer = async (name: string) => {
+const createPlayer = async (playerData: CreatePlayerData) => {
   const newPlayer = await Player.create({
-    name,
+    name: playerData.name,
     elo: 800,
     matchesPlayed: 0,
     wins: 0,
     losses: 0,
+    main: playerData.main || null,
+    skin: playerData.skin || 0,
   });
   return newPlayer;
 };
 
 // Get all players
 const getPlayers = async () => {
-  return await Player.findAll();
+  return await Player.findAll({
+    include: [{
+      model: Character,
+      as: 'mainCharacter',
+      attributes: ['id', 'name', 'icon_name']
+    }]
+  });
 };
 
 // Get a player by ID
 const getPlayerById = async (id: number) => {
-  return await Player.findByPk(id);
+  return await Player.findByPk(id, {
+    include: [{
+      model: Character,
+      as: 'mainCharacter',
+      attributes: ['id', 'name', 'icon_name']
+    }]
+  });
 };
 
 // Update a player's information
-const updatePlayer = async (id: number, updates: Partial<{ name: string; elo: number; matchesPlayed: number; wins: number; losses: number; }>) => {
+const updatePlayer = async (id: number, updates: UpdatePlayerData & Partial<{ elo: number; matchesPlayed: number; wins: number; losses: number; }>) => {
   const player = await Player.findByPk(id);
   if (player) {
     return await player.update(updates);

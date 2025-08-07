@@ -1,11 +1,12 @@
 import { Request, Response } from 'express';
 import playerService from '../services/player.service';
+import { CreatePlayerData, UpdatePlayerData } from '../types/player.types';
 
 // Create a new player
 export const createPlayer = async (req: Request, res: Response) => {
   try {
-    const playerData = req.body;
-    const newPlayer = await playerService.createPlayer(playerData.name);
+    const playerData: CreatePlayerData = req.body;
+    const newPlayer = await playerService.createPlayer(playerData);
     res.status(201).json(newPlayer);
   } catch (error) {
     console.error('Error creating player:', error);
